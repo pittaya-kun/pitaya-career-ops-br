@@ -1,0 +1,509 @@
+# Brazilian Job Boards & ATS Providers for career-ops
+# Copy relevant sections to your portals.yml and customize
+#
+# This file demonstrates how to configure all the new BR providers/parsers
+
+# ============================================================
+# JOB BOARDS (board-wide providers - search by keywords across many companies)
+# ============================================================
+
+job_boards:
+  # Gupy (already exists in career-ops) - BR's largest ATS platform
+  - provider: gupy
+    gupy:
+      keywords:
+        - "Desenvolvedor"
+        - "Engenheiro de Software"
+        - "Software Engineer"
+        - "Data Scientist"
+        - "DevOps"
+        - "Backend"
+        - "Frontend"
+        - "Full Stack"
+        - "Mobile"
+        - "Cloud"
+        - "SRE"
+        - "Platform Engineer"
+        - "Solutions Architect"
+        - "Tech Lead"
+        - "Engineering Manager"
+      since_days: 14
+      workplace_types:
+        - "remote"
+        - "hybrid"
+      job_types:
+        - "full-time"
+        - "contract"
+      state: ""  # Optional: filter by state (SP, RJ, MG, etc.)
+    enabled: true
+
+  # 99jobs - Tech/startup focused job board
+  - provider: 99jobs
+    99jobs:
+      keywords:
+        - "Desenvolvedor"
+        - "Software Engineer"
+        - "Product Manager"
+        - "Data Scientist"
+        - "Designer"
+        - "DevOps"
+        - "Backend"
+        - "Frontend"
+        - "Full Stack"
+        - "Mobile"
+      location: "São Paulo"  # Optional: filter by city
+      since_days: 14
+    enabled: true
+
+  # Trampos - Tech/creative job board (tries API then RSS)
+  - provider: trampos
+    trampos:
+      keywords:
+        - "Desenvolvedor"
+        - "Software Engineer"
+        - "Product Manager"
+        - "Designer"
+        - "Data Scientist"
+        - "DevOps"
+      since_days: 14
+    enabled: true
+
+
+# ============================================================
+# TRACKED COMPANIES (per-company providers/parsers)
+# ============================================================
+
+tracked_companies:
+  # --------------------------------------------------------------------------
+  # ATS Providers (auto-detected from careers_url hostname)
+  # --------------------------------------------------------------------------
+
+  # Kenoby ATS - many Brazilian tech companies use this
+  - name: Nubank
+    careers_url: https://nubank.kenoby.com
+    provider: kenoby
+    enabled: true
+
+  - name: iFood
+    careers_url: https://ifood.kenoby.com
+    provider: kenoby
+    enabled: true
+
+  - name: Loft
+    careers_url: https://loft.kenoby.com
+    provider: kenoby
+    enabled: true
+
+  - name: Creditas
+    careers_url: https://creditas.kenoby.com
+    provider: kenoby
+    enabled: true
+
+  - name: QuintoAndar
+    careers_url: https://quintoandar.kenoby.com
+    provider: kenoby
+    enabled: true
+
+  # Sólides ATS - popular Brazilian HR platform
+  - name: C6 Bank
+    careers_url: https://c6bank.solides.jobs
+    provider: solides
+    enabled: true
+
+  - name: Banco Inter
+    careers_url: https://bancointer.solides.jobs
+    provider: solides
+    enabled: true
+
+  - name: XP Inc
+    careers_url: https://xpinc.solides.jobs
+    provider: solides
+    enabled: true
+
+  # Pandapé ATS (former Vagas.com ATS)
+  - name: Magazine Luiza
+    careers_url: https://magazineluiza.pandape.com.br
+    provider: pandape
+    enabled: true
+
+  - name: Grupo Boticário
+    careers_url: https://grupoboticario.pandape.com.br
+    provider: pandape
+    enabled: true
+
+  # Alternative: Shared Pandapé URL pattern
+  - name: Empresa Exemplo Pandapé
+    careers_url: https://ats.pandape.com.br/empresaexemplo
+    provider: pandape
+    enabled: false
+
+
+  # --------------------------------------------------------------------------
+  # Local Parsers (Playwright-based for job boards without APIs)
+  # --------------------------------------------------------------------------
+
+  # Vagas.com - largest traditional job board in Brazil
+  # Use local parser for specific companies on Vagas.com
+  - name: Nubank (Vagas.com)
+    careers_url: https://www.vagas.com.br/empresa/nubank
+    scan_method: local_parser
+    parser:
+      command: node
+      script: local/vagascom-company.js
+      args: ["--max-pages", "10"]
+      format: jobs-json-v1
+    enabled: true
+
+  - name: iFood (Vagas.com)
+    careers_url: https://www.vagas.com.br/empresa/ifood
+    scan_method: local_parser
+    parser:
+      command: node
+      script: local/vagascom-company.js
+      args: ["--max-pages", "10"]
+      format: jobs-json-v1
+    enabled: true
+
+  - name: Ambev (Vagas.com)
+    careers_url: https://www.vagas.com.br/empresa/ambev
+    scan_method: local_parser
+    parser:
+      command: node
+      script: local/vagascom-company.js
+      args: ["--max-pages", "10"]
+      format: jobs-json-v1
+    enabled: true
+
+  - name: Petrobras (Vagas.com)
+    careers_url: https://www.vagas.com.br/empresa/petrobras
+    scan_method: local_parser
+    parser:
+      command: node
+      script: local/vagascom-company.js
+      args: ["--max-pages", "10"]
+      format: jobs-json-v1
+    enabled: true
+
+  - name: Vale (Vagas.com)
+    careers_url: https://www.vagas.com.br/empresa/vale
+    scan_method: local_parser
+    parser:
+      command: node
+      script: local/vagascom-company.js
+      args: ["--max-pages", "10"]
+      format: jobs-json-v1
+    enabled: true
+
+  # Catho - traditional job board (strong anti-bot, needs session cookies)
+  # Note: May need logged-in session for full access
+  - name: Ambev (Catho)
+    careers_url: https://www.catho.com.br/empresas/ambev/vagas/
+    scan_method: local_parser
+    parser:
+      command: node
+      script: local/catho-company.js
+      args: ["--max-pages", "10"]
+      format: jobs-json-v1
+    enabled: false  # Disabled by default due to anti-bot
+
+  - name: Magazine Luiza (Catho)
+    careers_url: https://www.catho.com.br/empresas/magazine-luiza/vagas/
+    scan_method: local_parser
+    parser:
+      command: node
+      script: local/catho-company.js
+      args: ["--max-pages", "10"]
+      format: jobs-json-v1
+    enabled: false
+
+
+  # --------------------------------------------------------------------------
+  # Other ATS / Career Pages (auto-detected by career-ops)
+  # --------------------------------------------------------------------------
+
+  # Greenhouse (many international companies with BR offices)
+  - name: Stripe
+    careers_url: https://boards.greenhouse.io/stripe
+    enabled: true
+
+  - name: Shopify
+    careers_url: https://boards.greenhouse.io/shopify
+    enabled: true
+
+  - name: GitLab
+    careers_url: https://boards.greenhouse.io/gitlab
+    enabled: true
+
+  # Lever
+  - name: Vercel
+    careers_url: https://jobs.lever.co/vercel
+    enabled: true
+
+  - name: Linear
+    careers_url: https://jobs.lever.co/linear
+    enabled: true
+
+  # Ashby
+  - name: Notion
+    careers_url: https://jobs.ashbyhq.com/notion
+    enabled: true
+
+  - name: Figma
+    careers_url: https://jobs.ashbyhq.com/figma
+    enabled: true
+
+  # Workable
+  - name: Railway
+    careers_url: https://apply.workable.com/railway
+    enabled: true
+
+
+# ============================================================
+# LOCATION FILTER (Brazil-focused)
+# ============================================================
+
+location_filter:
+  always_allow:
+    - "Brasil"
+    - "Brazil"
+  allow:
+    - "Brasil"
+    - "Brazil"
+    - "Brasília"
+    - "Brasilia"
+    - "Rio de Janeiro"
+    - "São Paulo"
+    - "Sao Paulo"
+    - "Florianópolis"
+    - "Florianopolis"
+    - "Fortaleza"
+    - "Recife"
+    - "Salvador"
+    - "Belo Horizonte"
+    - "Porto Alegre"
+    - "Curitiba"
+    - "Goiânia"
+    - "Goiania"
+    - "Campinas"
+    - "Remote"
+    - "Remoto"
+    - "Híbrido"
+    - "Hibrido"
+  block:
+    # Add countries/regions you don't want
+    # - "United States"
+    # - "Europe"
+  # strict: false  # Set true to reject postings with no location
+  # remote_title_fallback: true
+
+
+# ============================================================
+# TITLE FILTER (Tech-focused - customize for your role)
+# ============================================================
+
+title_filter:
+  positive:
+    # AI/ML roles
+    - "AI"
+    - "ML"
+    - "LLM"
+    - "Agent"
+    - "Agentic"
+    - "GenAI"
+    - "Generative AI"
+    - "NLP"
+    - "LLMOps"
+    - "MLOps"
+    - "Machine Learning"
+    - "Data Scientist"
+    - "Data Science"
+    - "AI Engineer"
+    - "ML Engineer"
+
+    # Engineering roles
+    - "Software Engineer"
+    - "Software Developer"
+    - "Desenvolvedor"
+    - "Engenheiro de Software"
+    - "Backend"
+    - "Frontend"
+    - "Full Stack"
+    - "Fullstack"
+    - "Mobile"
+    - "iOS"
+    - "Android"
+    - "React"
+    - "Node"
+    - "Python"
+    - "Go"
+    - "Java"
+    - "Kotlin"
+    - "TypeScript"
+    - "DevOps"
+    - "SRE"
+    - "Platform Engineer"
+    - "Cloud Engineer"
+    - "Infrastructure"
+    - "Solutions Architect"
+    - "Tech Lead"
+    - "Engineering Manager"
+    - "Staff Engineer"
+    - "Principal Engineer"
+
+    # Product/Design
+    - "Product Manager"
+    - "Product Designer"
+    - "UX Designer"
+    - "UI Designer"
+    - "Designer"
+
+  negative:
+    - "Junior"
+    - "word:Intern"
+    - "word:Interns"
+    - "Internship"
+    - "Estágio"
+    - "Estagiario"
+    - "Werkstudent"
+    - "Praktikant"
+    - "Praktikum"
+    - "Trainee"
+    - "Apprentice"
+    - "Apprenticeship"
+    - ".NET"
+    - "Java "
+    - "PHP"
+    - "Ruby"
+    - "Embedded"
+    - "Firmware"
+    - "FPGA"
+    - "ASIC"
+    - "Blockchain"
+    - "Web3"
+    - "Crypto"
+    - "Salesforce Admin"
+    - "SAP "
+    - "Oracle EBS"
+    - "Mainframe"
+    - "COBOL"
+    - "Customer Care Agent"
+    - "Kundenbetreuung"
+    - "Jr"
+    - "Social Media"
+    - "Social Media Manager"
+    - "Assistant"
+    - "Auxiliar"
+    - "Operador"
+    - "Produção"
+    - "Arte-finalista"
+    - "Arte Finalista"
+    - "Finalizador"
+    - "DTP"
+    - "Diagramador"
+    - "Diagramadora"
+
+  seniority_boost:
+    - "Senior"
+    - "Staff"
+    - "Principal"
+    - "Lead"
+    - "Head"
+    - "Director"
+    - "Sênior"
+    - "Sênior"
+    - "Pleno"
+    - "Senior"
+    - "Staff"
+    - "Principal"
+    - "Lead"
+    - "Head"
+    - "Director"
+
+
+# ============================================================
+# POSTING AGE FILTER
+# ============================================================
+
+max_posting_age_days: 45
+
+
+# ============================================================
+# CONTENT FILTER (optional - filter by tech stack in description)
+# ============================================================
+
+# content_filter:
+#   positive:
+#     - "python"
+#     - "typescript"
+#     - "react"
+#     - "node"
+#     - "aws"
+#     - "gcp"
+#     - "kubernetes"
+#     - "docker"
+#     - "sql"
+#     - "nosql"
+#   negative:
+#     - "php"
+#     - "wordpress"
+#     - "salesforce"
+#     - "sap"
+#   # by_title_keyword:
+#   #   "AI Engineer":
+#   #     positive:
+#   #       - "llm"
+#   #       - "gpt"
+#   #       - "claude"
+#   #       - "langchain"
+#   #       - "rag"
+
+
+# ============================================================
+# VISA FILTER (optional - for international candidates)
+# ============================================================
+
+# visa_filter:
+#   enabled: true
+#   require_mention: false
+
+
+# ============================================================
+# HOW TO USE
+# ============================================================
+#
+# 1. Copy this file to portals.yml in your career-ops root:
+#    cp portals.br-example.yml portals.yml
+#
+# 2. Edit the tracked_companies list to add/remove companies you care about
+#
+# 3. Edit title_filter.positive with YOUR target role keywords
+#
+# 4. For local parsers (Vagas.com, Catho), the scripts are in local/
+#    They are gitignored by default so your private company list stays private
+#
+# 5. Test a provider:
+#    node verify-portals.mjs
+#
+# 6. Run a scan:
+#    node scan.mjs --json
+#
+# 7. For companies with anti-bot (Catho), you may need to:
+#    - Login manually in browser
+#    - Export cookies
+#    - Modify the parser to use cookies
+#    - Or use Playwright with persistent context
+#
+# ============================================================
+# NOTES
+# ============================================================
+#
+# - Gupy: Board-wide search via portal.gupy.io API (zero-token, fast)
+# - Kenoby/Sólides/Pandapé: ATS providers, auto-detected from *.kenoby.com, *.solides.jobs, *.pandape.com.br
+# - Vagas.com/Catho: Local parsers using Playwright (per-company, slower but works)
+# - 99jobs/Trampos: Job board providers (try API first, fallback to RSS)
+#
+# - Local parsers live in local/ (gitignored) - keep your company list private
+# - Provider scripts live in providers/ - can be contributed upstream
+# - The local/ folder is in .gitignore by default in career-ops
+#
+# ============================================================
